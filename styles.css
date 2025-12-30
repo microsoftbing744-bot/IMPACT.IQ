@@ -147,16 +147,23 @@ ul {
 .hero {
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
-    padding: calc(80px + 3rem) 2rem 3rem;
+    padding: calc(80px + 2rem) 2rem 6rem;
+}
+
+.hero-split {
+    padding-bottom: 8rem;
 }
 
 .hero-bg {
     position: absolute;
     inset: 0;
     overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
 }
 
 .gradient-orb {
@@ -217,11 +224,109 @@ ul {
     }
 }
 
-.hero-content {
+/* Hero Main Container - Split Layout */
+.hero-main-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    width: 100%;
+    max-width: 1400px;
+    padding: 0 2rem;
     position: relative;
     z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 10;
     text-align: center;
     max-width: 900px;
+}
+
+/* Hero Text Side - Left aligned for split layout */
+.hero-text-side {
+    text-align: left;
+    max-width: 600px;
+}
+
+.hero-text-side .hero-cta {
+    justify-content: flex-start;
+    margin-bottom: 0;
+}
+
+.hero-text-side .hero-description {
+    margin: 0 0 2rem 0;
+}
+
+/* 3D Model Background - Full Screen Behind Content */
+.hero-3d-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: auto;
+    overflow: hidden;
+}
+
+.hero-3d-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(180deg, var(--color-bg-primary) 0%, transparent 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.hero-3d-bg::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(180deg, transparent 0%, var(--color-bg-primary) 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.hero-3d-bg iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: none;
+}
+
+/* Responsive: Adjust 3D on smaller screens */
+@media (max-width: 1024px) {
+    .hero-3d-bg {
+        opacity: 0.7;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-3d-bg {
+        opacity: 0.5;
+    }
+}
+
+/* Hide Spline Watermark */
+.hero-3d-bg .spline-watermark-cover {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 180px;
+    height: 50px;
+    background: var(--color-bg-primary);
+    z-index: 10;
+    pointer-events: none;
 }
 
 .hero-badge {
@@ -293,6 +398,37 @@ ul {
     margin-bottom: 4rem;
 }
 
+margin-bottom: 4rem;
+}
+
+/* Scroll Animations */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.stagger-delay-1 {
+    transition-delay: 0.1s;
+}
+
+.stagger-delay-2 {
+    transition-delay: 0.2s;
+}
+
+.stagger-delay-3 {
+    transition-delay: 0.3s;
+}
+
+.stagger-delay-4 {
+    transition-delay: 0.4s;
+}
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -307,6 +443,7 @@ ul {
 
 /* Buttons */
 .btn {
+
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -350,6 +487,9 @@ ul {
     display: flex;
     justify-content: center;
     gap: 4rem;
+    position: relative;
+    z-index: 2;
+    margin-top: 8rem;
 }
 
 .stat-item {
@@ -380,7 +520,7 @@ ul {
 /* Scroll Indicator */
 .scroll-indicator {
     position: absolute;
-    bottom: 3rem;
+    bottom: 1rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -389,6 +529,7 @@ ul {
     gap: 0.5rem;
     color: var(--color-text-muted);
     font-size: 0.75rem;
+    z-index: 0;
 }
 
 .scroll-arrow {
@@ -594,8 +735,23 @@ ul {
     background: var(--gradient-primary);
     border-radius: 0.375rem 0.375rem 0 0;
     height: var(--height);
-    animation: growUp 1s ease forwards;
+    transform: scaleY(0);
     transform-origin: bottom;
+    transition: transform 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+}
+
+.chart-bar.active {
+    transform: scaleY(1);
+}
+
+@keyframes growUp {
+    from {
+        transform: scaleY(0);
+    }
+
+    to {
+        transform: scaleY(1);
+    }
 }
 
 @keyframes growUp {
@@ -875,6 +1031,14 @@ ul {
     width: var(--fill);
     background: var(--gradient-primary);
     border-radius: var(--radius-full);
+
+    /* Animation setup */
+    width: 0 !important;
+    transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.meter-fill.active {
+    width: var(--fill) !important;
 }
 
 .spec-score {
@@ -910,7 +1074,21 @@ ul {
     width: 32px;
     height: 32px;
     border-radius: var(--radius-sm);
-    transition: 0.15s ease;
+    transition: 0.2s ease;
+
+    /* Animation setup */
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+}
+
+.cell:hover {
+    transform: scale(1.1) !important;
+}
+
+.cell.active {
+    transform: scale(1);
+    opacity: 1;
 }
 
 .cell:hover {
